@@ -33,8 +33,7 @@ static int findBarrio (TBarrios * barrios, size_t size, char * nombre, int * ind
 
 void incArbolBarrio(barriosADT barrios, char * nombre){
     int index;
-    int ok = findBarrio(barrios->barrios, barrios->sizeBarrios, nombre, &index);
-    if (ok){
+    if (findBarrio(barrios->barrios, barrios->sizeBarrios, nombre, &index)){
         barrios->barrios[index].cant_arboles++;
         barrios->barrios[index].arbol_habitante_promedio = (double)barrios->barrios[index].cant_arboles / barrios->barrios[index].cant_habitantes;
     }
