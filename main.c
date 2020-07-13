@@ -2,14 +2,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "arbolesADT.h"
 #include "barriosADT.h"
+#include "arbolesADT.h"
 
 #define MAX_LEN 2048
 #define DECIMAL 2
-#define BARRIO 2
-#define ESPECIE 7
-#define DIAMETRO 11
+#define BARRIO 12
+#define ESPECIE 6
+#define DIAMETRO 15
 
 typedef struct AuxStruct{
     char * nombre_auxiliar;
@@ -21,28 +21,28 @@ int sortCantArboles (const void * aux1, const void * aux2);
 int sortPromedioArbHab (const void * aux1,const void * aux2);
 int sortPromedioDiamArb (const void * aux1,const void * aux2);
 
-
 int main(int argc, char *argv[]) {
     
     if (argc != 3) {
       fprintf(stderr, "Invalid number of arguments\n");
       return 1;
     }
- 
     FILE * fileArboles = fopen(argv[1], "r");
     FILE * fileBarrios = fopen(argv[2], "r");
     FILE *q1, *q2, *q3;
 
     if(fileBarrios == NULL || fileArboles == NULL){
-        fprintf(stderr, "Can't open file.\n");
-        if (fileBarrios == NULL)
+        if (fileBarrios == NULL){
+            fprintf(stderr, "Cannot open %s\n", argv[2]);
             fclose(fileArboles);
-        else
+        }
+        else if (fileArboles == NULL){
+            fprintf(stderr, "Cannot open %s\n", argv[1]);
             fclose(fileBarrios);
+        }
         return 1;
     }
-
-   barriosADT barrios = nuevoBarrio();
+    barriosADT barrios = nuevoBarrio();
     //Leo archivo de barrios
     char line[MAX_LEN];
     fgets(line, MAX_LEN, fileBarrios); //evito la primer linea de encabezado
@@ -66,18 +66,20 @@ int main(int argc, char *argv[]) {
         int diametro;
         for (token = strtok (line, ";"); token != NULL; token = strtok (NULL, ";"))
         {
-            if (index == BARRIO)
+            if (index == BARRIO){
                 barrio = token;
-            else if (index == ESPECIE)
+            }
+            else if (index == ESPECIE){
                 especie = token;
-            else if (index == DIAMETRO)
+            }
+            else if (index == DIAMETRO){
                 diametro = atoi(token);
+            }
             index++;
         }
         addArbol(arboles, especie, diametro);
         incArbolBarrio(barrios, barrio);
-     }
-
+    }
 
     //Abro archivos de query para escribirlos
     q1 = fopen("query1.csv", "wt");
@@ -86,7 +88,7 @@ int main(int argc, char *argv[]) {
     fprintf(q2, "BARRIO;ARBOLES_POR_HABITANTE\n");
     q3 = fopen("query3.csv", "wt");
     fprintf(q3, "NOMBRE_CIENTIFICO;PROMEDIO_DIAMETRO\n");
-
+    
     AuxStruct cant_arboles[sizeBarrio(barrios)];
     for (size_t i = 0; i < sizeBarrio(barrios); i++){
         cant_arboles[i].nombre_auxiliar =  nombreBarrio(barrios, i);
@@ -106,13 +108,13 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < sizeBarrio(barrios); i++){
         fprintf(q2, "%s;%.2f\n", cant_arboles[i].nombre_auxiliar, cant_arboles[i].valor_auxiliar);
     }
-    
+            
     AuxStruct diametroArbol[sizeArboles(arboles)];
     for (size_t i = 0; i < sizeArboles(arboles); i++){
         diametroArbol[i].nombre_auxiliar = nombreArbol(arboles, i);
         diametroArbol[i].valor_auxiliar = TruncNumber(promedioDiam(arboles, i), DECIMAL);
     }
-    
+            
     qsort(diametroArbol, sizeArboles(arboles), sizeof(AuxStruct), sortPromedioDiamArb);
     for (size_t i = 0; i < sizeArboles(arboles); i++){
         fprintf(q3, "%s;%.2f\n", diametroArbol[i].nombre_auxiliar, diametroArbol[i].valor_auxiliar);
@@ -125,23 +127,19 @@ int main(int argc, char *argv[]) {
     fclose(q3);
     freeArboles(arboles);
     freeBarrios(barrios);
-    return 0;
 }
-
+  
 int sortCantArboles (const void * aux1, const void * aux2){
     AuxStruct *barrio1 = (AuxStruct *)aux1;
     AuxStruct *barrio2 = (AuxStruct *)aux2;
     int num1 = barrio1->valor_auxiliar;
     int num2 = barrio2->valor_auxiliar;
     int comp = num1 - num2;
-    int returnValue;
     if (comp == 0)
-        returnValue = strcmp(barrio1->nombre_auxiliar, barrio2->nombre_auxiliar);
-    else if (comp > 0)
-        returnValue = -1;
-    else
-        returnValue = 1;
-    return returnValue;
+        return strcmp(barrio1->nombre_auxiliar, barrio2->nombre_auxiliar);
+    if (comp > 0)
+        return -1;
+    return 1;
 }
 
 int sortPromedioArbHab (const void * aux1,const void * aux2){
@@ -150,16 +148,11 @@ int sortPromedioArbHab (const void * aux1,const void * aux2){
     double num1 = barrio1->valor_auxiliar;
     double num2 = barrio2->valor_auxiliar;
     double comp = num1 - num2;
-    int returnValue;
     if (comp == 0)
-        returnValue = strcmp(barrio1->nombre_auxiliar, barrio2->nombre_auxiliar);
-    else if (comp > 0)
-        returnValue = -1;
-    else
-        returnValue = 1;
-    free(barrio1);
-    free(barrio2);
-    return returnValue;
+        return strcmp(barrio1->nombre_auxiliar, barrio2->nombre_auxiliar);
+    if (comp > 0)
+        return -1;
+    return 1;
 }
 
 int sortPromedioDiamArb (const void * aux1,const void * aux2){
@@ -168,16 +161,11 @@ int sortPromedioDiamArb (const void * aux1,const void * aux2){
     double num1 = arbol1->valor_auxiliar;
     double num2 = arbol2->valor_auxiliar;
     double comp = num1 - num2;
-    int returnValue;
     if (comp == 0)
-        returnValue = strcmp(arbol1->nombre_auxiliar, arbol2->nombre_auxiliar);
-    else if (comp > 0)
-        returnValue = -1;
-    else
-        returnValue = 1;
-    free(arbol1);
-    free(arbol2);
-    return returnValue;
+        return strcmp(arbol1->nombre_auxiliar, arbol2->nombre_auxiliar);
+    if (comp > 0)
+        return -1;
+    return 1;
 }
 
 double TruncNumber (double num1, int digits){
@@ -185,5 +173,6 @@ double TruncNumber (double num1, int digits){
     int numerador = num1*potencia;
     return numerador/(1.0*potencia);
 }
+
 
 
