@@ -7,9 +7,6 @@
 
 #define MAX_LEN 2048
 #define DECIMAL 2
-#define BARRIO 12
-#define ESPECIE 6
-#define DIAMETRO 15
 
 typedef struct AuxStruct{
     char * nombre_auxiliar;
