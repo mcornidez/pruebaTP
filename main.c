@@ -46,10 +46,10 @@ int main(int argc, char *argv[]) {
     while(fgets(line, MAX_LEN, fileBarrios)!=NULL){
         char * token;
         token = strtok (line, ";");
-        char * nombre = token;
+        char * barrio = token;
         token = strtok (NULL, "\n");
         int habitantes = atoi(token);
-        addBarrio(barrios, nombre, habitantes);
+        addBarrio(barrios, barrio, habitantes);
     }
 
     //Leo archivo de arboles
@@ -63,15 +63,12 @@ int main(int argc, char *argv[]) {
         int diametro;
         for (token = strtok (line, ";"); token != NULL; token = strtok (NULL, ";"))
         {
-            if (index == BARRIO){
+            if (index == BARRIO)
                 barrio = token;
-            }
-            else if (index == ESPECIE){
+            else if (index == ESPECIE)
                 especie = token;
-            }
-            else if (index == DIAMETRO){
+            else if (index == DIAMETRO)
                 diametro = atoi(token);
-            }
             index++;
         }
         addArbol(arboles, especie, diametro);
@@ -91,6 +88,7 @@ int main(int argc, char *argv[]) {
         cant_arboles[i].nombre_auxiliar =  nombreBarrio(barrios, i);
         cant_arboles[i].valor_auxiliar = cantArb(barrios, i);
     }
+    
     qsort(cant_arboles, sizeBarrio(barrios), sizeof(AuxStruct), sortCantArboles);
     for (size_t i = 0; i < sizeBarrio(barrios); i++){
         fprintf(q1, "%s;%.f\n", cant_arboles[i].nombre_auxiliar, cant_arboles[i].valor_auxiliar);
@@ -100,7 +98,7 @@ int main(int argc, char *argv[]) {
         cant_arboles[i].nombre_auxiliar = nombreBarrio(barrios, i);
         cant_arboles[i].valor_auxiliar = TruncNumber(promedioArbHab(barrios, i), DECIMAL);
     }
-
+    
     qsort(cant_arboles, sizeBarrio(barrios), sizeof(AuxStruct), sortPromedioArbHab);
     for (size_t i = 0; i < sizeBarrio(barrios); i++){
         fprintf(q2, "%s;%.2f\n", cant_arboles[i].nombre_auxiliar, cant_arboles[i].valor_auxiliar);
