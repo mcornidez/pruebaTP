@@ -7,4 +7,4 @@ all: arbolesVANADT
 
 arbolesVANADT: main.c arbolesADT.c barriosADT.c
 	$(CC) -c main.c arbolesADT.c barriosADT.c $(CFLAGS) -D BARRIO=12 -D ESPECIE=6 -D DIAMETRO=15
-	$(CC) -o arbolesVANADT main.c arbolesADT.c barriosADT.c $(CFLAGS)
+	$(CC) -o arbolesVANADT main.c arbolesADT.c barriosADT.c $(CFLAGS) -D BARRIO=12 -D ESPECIE=6 -D DIAMETRO=15
